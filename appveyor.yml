@@ -27,6 +27,8 @@ install:
   - "conda update -q conda"
   - "conda create -n cuda-test python=3.6 conda-build"
   - "activate cuda-test"
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+  - "conda list"
   - "conda build condarecipe9.2"
  
 
