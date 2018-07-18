@@ -35,6 +35,7 @@ install:
   - "conda build condarecipe9.2"
   - "conda install --use-local %CONDA_PREFIX%\\conda-bld\\win-64\\cudatoolkit-dev-9.2-0.tar.bz2"
   - "conda list"
+  - "DIR %CONDA_PREFIX%\\etc\\conda\\activate.d"
  
 
 build: false

@@ -24,6 +24,7 @@ install:
   - conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2
   - echo $CONDA_PREFIX
   - echo $PATH
+  - ls $CONDA_PREFIX/etc/conda/activate.d
   # Find the size of the built package
   - bzcat $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 | wc -c | perl -lne 'printf("%.2fM\n", $_/1024/1024)'
 script:
