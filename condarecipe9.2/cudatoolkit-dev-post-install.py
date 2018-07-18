@@ -9,6 +9,7 @@ from pathlib import Path
 from subprocess import check_call
 from tempfile import TemporaryDirectory as tempdir
 from conda.exports import download, hashsum_file
+import yaml 
 
 config = {}
 versions = ["9.2"]
@@ -75,12 +76,13 @@ class Extractor(object):
         self.installers_url_ext = ver_config["installers_url_ext"]
         self.cu_blob = platform_config['blob']
         self.config = {"version": version, **ver_config}
+        self.conda_prefix = os.environ.get('CONDA_PREFIX')
         self.prefix = os.environ["PREFIX"]
         self.src_dir = os.environ["SRC_DIR"]
         self.output_dir = os.path.join(self.prefix, self.libdir[getplatform()])
         self.symlinks = getplatform() == "linux"
         self.debug_install_path = os.environ.get('DEBUG_INSTALLER_PATH')
-        
+
     def download_blobs(self):
         """Downloads the binary blobs to the $SRC_DIR
         """
@@ -89,16 +91,34 @@ class Extractor(object):
         dl_path = os.path.join(self.src_dir, self.cu_blob)
         if not self.debug_install_path:
             print("downloading %s to %s" % (dl_url, dl_path))
+            download(dl_url, dl_path)
 
         else:
             existing_file = os.path.join(self.debug_install_path, self.cu_blob)
             print("DEBUG: copying %s to %s" % (existing_file, dl_path))
+            shutil.copy(existing_file, dl_path)
 
     def check_md5(self):
         """Checks the md5sums of the downloaded binaries
         """
         md5file = self.md5_url.split("/")[-1]
         print("Checking the md5sums......", md5file)
+        path = os.path.join(self.src_dir, md5file)
+        download(self.md5_url, path)
+
+        # compute hash of blob
+        blob_path = os.path.join(self.src_dir, self.cu_blob)
+        md5sum = hashsum_file(blob_path, 'md5')
+
+        # get checksums
+        with open(md5file, 'r') as f:
+            checksums = [x.strip().split() for x in f.read().splitlines() if x]
+
+        # check md5 and filename match up
+        check_dict = {x[0]: x[1] for x in checksums}
+        assert check_dict[md5sum].startswith(self.cu_blob[:-7])
+        print("<<<<<<<<<<<<<<<<<<<<<DONE CHECKING MD5SUMS>>>>>>>>>>>>>>>>>>>")
+
 
     def copy(self, *args):
         """The method to copy extracted files into the conda package platform
@@ -117,6 +137,15 @@ class Extractor(object):
 
     def copy_files(self):
         print("Copying files............")
+
+    def dump_config(self):
+
+        """Dumps the config dictionary into the output directory
+        """
+
+        dumpfile = os.path.join(self.conda_prefix, 'cudatoolkit-dev_config.yaml')
+        with open(dumpfile, 'w') as f:
+            yaml.dump(self.config, f, default_flow_style=False)
 
 
 class WindowsExtractor(Extractor):
@@ -181,13 +210,16 @@ def _main():
     extractor = extractor_impl(cu_version, version_cfg, version_cfg[plat])
 
     # download binaries 
-    extractor.download_blobs()
+    #extractor.download_blobs()
 
     # check md5sum 
-    extractor.check_md5()
+    #extractor.check_md5()
 
     # Extract 
     extractor.extract()
+
+    # Dump config 
+    extractor.dump_config()
 
 
 if __name__ == "__main__":

@@ -36,6 +36,7 @@ install:
   - "conda install --use-local %CONDA_PREFIX%\\conda-bld\\win-64\\cudatoolkit-dev-9.2-0.tar.bz2"
   - "conda list"
   - "DIR %CONDA_PREFIX%\\etc\\conda\\activate.d"
+  - "type %CONDA_PREFIX%%\\cudatoolkit-dev_config.yaml"
  
 
 build: false
