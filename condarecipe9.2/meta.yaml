@@ -6,7 +6,6 @@ package:
   version: {{ version }}
 
 build:
-  detect_binary_files_with_prefix: true
   number: 0
   skip: false
 

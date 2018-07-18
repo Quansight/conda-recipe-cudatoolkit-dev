@@ -25,9 +25,9 @@ install:
 
   - "conda config --set always_yes yes --set changeps1 no"
   - "conda update -q conda"
-  - "conda install conda-build"
-  - "conda-build condarecipe9.2"
-  - "conda install --use-local %CONDA_PREFIX%/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2"
+  - "conda create -n cuda-test python=3.6 conda-build"
+  - "activate cuda-test"
+  - "conda build condarecipe9.2"
  
 
 build: false
