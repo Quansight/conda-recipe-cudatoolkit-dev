@@ -13,7 +13,7 @@ source:
   path: ../src/
 
 requirements:
-  host:
+  run:
    - requests 
    - 7za # [win]
    - conda 
