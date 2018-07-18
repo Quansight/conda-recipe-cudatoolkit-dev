@@ -210,10 +210,10 @@ def _main():
     extractor = extractor_impl(cu_version, version_cfg, version_cfg[plat])
 
     # download binaries 
-    #extractor.download_blobs()
+    extractor.download_blobs()
 
     # check md5sum 
-    #extractor.check_md5()
+    extractor.check_md5()
 
     # Extract 
     extractor.extract()
