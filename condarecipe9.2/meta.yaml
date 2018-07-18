@@ -14,14 +14,11 @@ source:
 
 requirements:
   host:
-   - python >=3
    - requests 
    - 7za # [win]
    - conda 
    - pyyaml
 
-  run:
-   - python 
 about:
   home: "https://developer.nvidia.com"
   license: "other"
