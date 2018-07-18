@@ -54,6 +54,10 @@ def _main():
     for file_name in os.listdir(deactivate_scripts_path):
         full_file_name = os.path.join(deactivate_scripts_path, file_name)
         copy_files(full_file_name, deactivate_dir_path)
+    # Copy cudatoolkit-dev-post-install.py to $PREFIX/bin
+    src = recipe_dir_path / 'cudatoolkit-dev-post-install.py'
+    dst = prefix_bin_dir_path
+    copy_files(src, dst)
 
 
 if __name__ == "__main__":
