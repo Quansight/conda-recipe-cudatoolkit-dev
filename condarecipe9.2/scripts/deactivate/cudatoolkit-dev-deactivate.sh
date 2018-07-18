@@ -1,2 +1,2 @@
 #!/bin/bash
-python cudatoolkit-dev-deactivate.py
+python $CONDA_PREFIX/etc/conda/deactivate.d/cudatoolkit-dev-deactivate.py
