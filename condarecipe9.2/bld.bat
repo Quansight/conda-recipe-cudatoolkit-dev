@@ -1,2 +1,2 @@
-"%SYS_PYTHON%" build.py
+"%PYTHON%" build.py
 if errorlevel 1 exit 1
