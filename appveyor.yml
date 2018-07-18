@@ -1,0 +1,36 @@
+# CI on Windows via appveyor
+# Adapted (minorly) from xarray's appveyor.yml, which itself
+# was based on Olivier Grisel's python-appveyor-demo
+
+environment:
+
+  matrix:
+    - PYTHON: "C:\\Python36-conda64"
+      PYTHON_VERSION: "3.6"
+      PYTHON_ARCH: "64"
+      CONDA_ENV: "py36"
+
+install:
+  # Install miniconda Python
+  - "powershell ./ci/install_python.ps1"
+
+  # Prepend newly installed Python to the PATH of this build (this cannot be
+  # done from inside the powershell script as it would require to restart
+  # the parent CMD process).
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
+
+  # Check that we have the expected version and architecture for Python
+  - "python --version"
+  - "python -c \"import struct; print(struct.calcsize('P') * 8)\""
+
+  - "conda config --set always_yes yes --set changeps1 no"
+  - "conda update -q conda"
+  - "conda install conda-build"
+  - "conda-build condarecipe9.2"
+  - "conda install --use-local %CONDA_PREFIX%/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2"
+ 
+
+build: false
+
+test_script:
+   - python tests/toy_test.py
