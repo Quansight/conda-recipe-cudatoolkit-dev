@@ -102,7 +102,6 @@ class Extractor(object):
         """Checks the md5sums of the downloaded binaries
         """
         md5file = self.md5_url.split("/")[-1]
-        print("Checking the md5sums......", md5file)
         path = os.path.join(self.src_dir, md5file)
         download(self.md5_url, path)
 
@@ -117,7 +116,7 @@ class Extractor(object):
         # check md5 and filename match up
         check_dict = {x[0]: x[1] for x in checksums}
         assert check_dict[md5sum].startswith(self.cu_blob[:-7])
-        print("<<<<<<<<<<<<<<<<<<<<<DONE CHECKING MD5SUMS>>>>>>>>>>>>>>>>>>>")
+      
 
 
     def copy(self, *args):

@@ -22,8 +22,6 @@ install:
   - source activate cuda-test
   - conda-build condarecipe9.2
   - conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2
-  - echo $CONDA_PREFIX
-  - echo $PATH
   - ls $CONDA_PREFIX/etc/conda/activate.d
   - cat $CONDA_PREFIX/cudatoolkit-dev_config.yaml
   # Find the size of the built package

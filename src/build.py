@@ -59,6 +59,11 @@ def _main():
     dst = prefix_bin_dir_path
     copy_files(src, dst)
 
+    print("<<<<<<<<<<<<<<<<<<<<<<<<<Listing Different Files>>>>>>>>>>>>>>>>>>>>")
+    print(os.listdir(activate_dir_path))
+    print(os.listdir(deactivate_dir_path))
+    print(os.listdir(prefix_bin_dir_path))
+
 
 if __name__ == "__main__":
     _main()
