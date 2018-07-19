@@ -6,10 +6,11 @@ import tarfile
 import urllib.parse as urlparse
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import check_call, call, check_output 
+import subprocess
 from tempfile import TemporaryDirectory as tempdir
 from conda.exports import download, hashsum_file
-import yaml 
+import yaml
+import stat 
 
 config = {}
 versions = ["9.2"]
@@ -162,12 +163,12 @@ class WindowsExtractor(Extractor):
     def extract(self):
         print("Extracting on Windows.....")
         runfile = os.path.join(self.src_dir, self.cu_blob)
-        print("HELLLLLLLLLO", os.listdir(self.src_dir),
-              os.listdir(self.extractdir))
         cmd = ['7za', 'x', '-o%s' %
                str(self.extractdir), runfile]
-        # check_call(cmd)
-        call(cmd, shell=True)
+        try:
+            subprocess.check_call(cmd)
+        except subprocess.CalledProcessError as e:
+            print("ERROR: Couldn't install Cudatoolkit: {reason}".format(reason=e))
         self.copy()
 
 
@@ -181,13 +182,16 @@ class LinuxExtractor(Extractor):
     def extract(self):
         print("Extracting on Linux")
         runfile = os.path.join(self.src_dir, self.cu_blob)
-        print("HELLLLLLLLLO", os.listdir(self.src_dir),
-              os.listdir(self.extractdir))
-        os.chmod(runfile, 0o777)
+        st = os.stat(runfile)
+        os.chmod(runfile, st.st_mode | stat.S_IXOTH)
+        # os.chmod(runfile, 0o777)
         cmd = [runfile, '--silent', '--toolkit',
                '--toolkitpath', str(self.extractdir), '--override']
-        check_call(cmd, shell=True)
-        #check_output(cmd, shell=True)
+        try:
+            subprocess.check_call(cmd)
+        except subprocess.CalledProcessError as e:
+            print("ERROR: Couldn't install Cudatoolkit: {reason}".format(reason=e))
+   
         self.copy()
 
 
