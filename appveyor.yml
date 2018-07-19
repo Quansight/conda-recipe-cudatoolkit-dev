@@ -25,7 +25,7 @@ install:
 
   - "conda config --set always_yes yes --set changeps1 no"
   - "conda update -q conda"
-  - "conda create -n cuda-test python=3.6 conda-build"
+  - "conda create -n cuda-test python=3.6 conda-build 7za"
   - "activate cuda-test"
   - "ECHO %CONDA_PREFIX%"
   - "SET PYTHON=%CONDA_PREFIX%\\python.exe"
