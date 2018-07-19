@@ -6,7 +6,7 @@ import tarfile
 import urllib.parse as urlparse
 from contextlib import contextmanager
 from pathlib import Path
-from subprocess import check_call, call 
+from subprocess import check_call, call, check_output 
 from tempfile import TemporaryDirectory as tempdir
 from conda.exports import download, hashsum_file
 import yaml 
@@ -184,11 +184,10 @@ class LinuxExtractor(Extractor):
         print("HELLLLLLLLLO", os.listdir(self.src_dir),
               os.listdir(self.extractdir))
         os.chmod(runfile, 0o777)
-        cmd = [runfile,
-               '--toolkitpath', str(self.extractdir), '--toolkit',
-               '--silent', '--override']
-        # check_call(cmd)
-        call(cmd, shell=True)
+        cmd = [runfile, '--silent', '--toolkit',
+               '--toolkitpath', str(self.extractdir), '--override']
+        check_call(cmd, shell=True)
+        #check_output(cmd, shell=True)
         self.copy()
 
 
