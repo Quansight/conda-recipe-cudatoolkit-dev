@@ -81,7 +81,6 @@ class Extractor(object):
         self.src_dir = Path(self.conda_prefix) / 'pkgs' / 'cudatoolkit-dev'
         self.extractdir = self.src_dir / 'extracted'
         try:
-            os.makedirs(self.src_dir)
             os.makedirs(self.extractdir)
 
         except FileExistsError:
@@ -163,6 +162,8 @@ class WindowsExtractor(Extractor):
     def extract(self):
         print("Extracting on Windows.....")
         runfile = os.path.join(self.src_dir, self.cu_blob)
+        print("HELLLLLLLLLO", os.listdir(self.src_dir),
+              os.listdir(self.extractdir))
         cmd = ['7za', 'x', '-o%s' %
                self.extractdir, runfile]
         check_call(cmd)
@@ -179,9 +180,11 @@ class LinuxExtractor(Extractor):
     def extract(self):
         print("Extracting on Linux")
         runfile = os.path.join(self.src_dir, self.cu_blob)
+        print("HELLLLLLLLLO", os.listdir(self.src_dir),
+              os.listdir(self.extractdir))
         os.chmod(runfile, 0o777)
         cmd = [runfile,
-               '--toolkitpath', self.extractdir, '--toolkit', 
+               '--toolkitpath', self.extractdir, '--toolkit',
                '--silent', '--override']
         check_call(cmd)
         self.copy()

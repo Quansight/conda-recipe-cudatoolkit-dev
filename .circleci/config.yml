@@ -1,0 +1,23 @@
+version: 2
+jobs:
+  conda:
+    docker:
+      - image: frolvlad/alpine-miniconda3
+    steps:
+      - run: apk add --no-cache build-base ca-certificates git openssh
+      - checkout
+      - restore_cache:
+          keys:
+            - conda-pkgs
+      - run: conda config --set always_yes yes --set changeps1 no && conda update -q conda && conda create -n cuda-test python=3.6 conda-build
+      - save_cache:
+          key: conda-pkgs
+          paths:
+            - /opt/conda/pkgs
+      - run: source activate cuda-test && conda-build condarecipe9.2 && conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
+      - run: source activate cuda-test && ls $CONDA_PREFIX/pkgs/cudatoolkit-dev
+workflows:
+  version: 2
+  test:
+    jobs:
+      - conda
