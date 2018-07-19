@@ -78,7 +78,15 @@ class Extractor(object):
         self.config = {"version": version, **ver_config}
         self.conda_prefix = os.environ.get('CONDA_PREFIX')
         self.prefix = os.environ["PREFIX"]
-        self.src_dir = os.environ["SRC_DIR"]
+        self.src_dir = Path(self.conda_prefix) / 'pkgs' / 'cudatoolkit-dev'
+        self.extractdir = self.src_dir / 'extracted'
+        try:
+            os.makedirs(self.src_dir)
+            os.makedirs(self.extractdir)
+
+        except FileExistsError:
+            pass
+
         self.output_dir = os.path.join(self.prefix, self.libdir[getplatform()])
         self.symlinks = getplatform() == "linux"
         self.debug_install_path = os.environ.get('DEBUG_INSTALLER_PATH')
@@ -110,15 +118,13 @@ class Extractor(object):
         md5sum = hashsum_file(blob_path, 'md5')
 
         # get checksums
-        with open(md5file, 'r') as f:
+        with open(path, 'r') as f:
             checksums = [x.strip().split() for x in f.read().splitlines() if x]
 
         # check md5 and filename match up
         check_dict = {x[0]: x[1] for x in checksums}
         assert check_dict[md5sum].startswith(self.cu_blob[:-7])
       
-
-
     def copy(self, *args):
         """The method to copy extracted files into the conda package platform
         specific directory. Platform specific extractors must implement.
@@ -156,6 +162,10 @@ class WindowsExtractor(Extractor):
 
     def extract(self):
         print("Extracting on Windows.....")
+        runfile = self.cu_blob
+        cmd = ['7za', 'x', '-o%s' %
+               self.extractdir, os.path.join(self.src_dir, runfile)]
+        check_call(cmd)
         self.copy()
 
 
@@ -168,6 +178,12 @@ class LinuxExtractor(Extractor):
 
     def extract(self):
         print("Extracting on Linux")
+        runfile = self.cu_blob
+        os.chmod(runfile, 0o777)
+        cmd = [os.path.join(self.src_dir, runfile),
+               '--toolkitpath', self.extractdir, '--toolkit', 
+               '--silent', '--override']
+        check_call(cmd)
         self.copy()
 
 
