@@ -165,7 +165,7 @@ class WindowsExtractor(Extractor):
         print("HELLLLLLLLLO", os.listdir(self.src_dir),
               os.listdir(self.extractdir))
         cmd = ['7za', 'x', '-o%s' %
-               self.extractdir, runfile]
+               str(self.extractdir), runfile]
         check_call(cmd)
         self.copy()
 
@@ -184,7 +184,7 @@ class LinuxExtractor(Extractor):
               os.listdir(self.extractdir))
         os.chmod(runfile, 0o777)
         cmd = [runfile,
-               '--toolkitpath', self.extractdir, '--toolkit',
+               '--toolkitpath', str(self.extractdir), '--toolkit',
                '--silent', '--override']
         check_call(cmd)
         self.copy()
