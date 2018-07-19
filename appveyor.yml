@@ -43,4 +43,5 @@ test_script:
   - "conda list"
   - "DIR %CONDA_PREFIX%\\etc\\conda\\activate.d"
   - "DIR %CONDA_PREFIX%\\pkgs\\cudatoolkit-dev-9.2-0"
-  - python tests/toy_test.py
+  - "DIR %CONDA_PREFIX%\\bin"
+  - "ECHO %CUDA_HOME%"
