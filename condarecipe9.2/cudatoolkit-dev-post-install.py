@@ -182,9 +182,9 @@ class LinuxExtractor(Extractor):
     def extract(self):
         print("Extracting on Linux")
         runfile = os.path.join(self.src_dir, self.cu_blob)
-        st = os.stat(runfile)
-        os.chmod(runfile, st.st_mode | stat.S_IXOTH)
-        # os.chmod(runfile, 0o777)
+        # st = os.stat(runfile)
+        # os.chmod(runfile, st.st_mode | stat.S_IXOTH)
+        os.chmod(runfile, 0o777)
         cmd = [runfile, '--silent', '--toolkit',
                '--toolkitpath', str(self.extractdir), '--override']
         try:
