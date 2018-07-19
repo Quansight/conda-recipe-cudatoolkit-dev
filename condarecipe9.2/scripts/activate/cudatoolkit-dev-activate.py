@@ -1,3 +1,38 @@
+#! /usr/bin/env python
+import subprocess
+class Bash2Py(object):
+  __slots__ = ["val"]
+  def __init__(self, value=''):
+    self.val = value
+
+def GetVariable(name, local=locals()):
+  if name in local:
+    return local[name]
+  if name in globals():
+    return globals()[name]
+  return None
+
+def Make(name, local=locals()):
+  ret = GetVariable(name, local)
+  if ret is None:
+    ret = Bash2Py(0)
+    globals()[name] = ret
+  return ret
+
+def Array(value):
+  if isinstance(value, list):
+    return value
+  if isinstance(value, basestring):
+    return value.strip().split(' ')
+  return [ value ]
+
+for Make("f").val in Array(CONDA_PREFIX.val)+Array("/pkgs/cudatoolkit-dev-9.2-0/bin"):
+    subprocess.call(["ln","-s",str(f.val),str(CONDA_PREFIX.val)+"/bin/"+str(f.val)],shell=True)
+_rc0 = subprocess.call(["set","CUDA_HOME="+str(CONDA_PREFIX.val)+"/pkgs/cudatoolkit-dev-9.2-0"],shell=True)
+for Make("f").val in Array(CONDA_PREFIX.val)+Array("/pkgs/cudatoolkit-dev-9.2-0/lib64"):
+    subprocess.call(["ln","-s",str(f.val),str(CONDA_PREFIX.val)+"/lib/"+str(f.val)],shell=True)
+
+"""
 import os
 from pathlib import Path
 
@@ -24,3 +59,4 @@ for file_name in os.listdir(cudatoolkit_libraries):
         os.symlink(full_file_path, ld_library_path)
     else:
         pass
+"""
