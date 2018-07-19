@@ -162,9 +162,9 @@ class WindowsExtractor(Extractor):
 
     def extract(self):
         print("Extracting on Windows.....")
-        runfile = self.cu_blob
+        runfile = os.path.join(self.src_dir, self.cu_blob)
         cmd = ['7za', 'x', '-o%s' %
-               self.extractdir, os.path.join(self.src_dir, runfile)]
+               self.extractdir, runfile]
         check_call(cmd)
         self.copy()
 
@@ -178,9 +178,9 @@ class LinuxExtractor(Extractor):
 
     def extract(self):
         print("Extracting on Linux")
-        runfile = self.cu_blob
+        runfile = os.path.join(self.src_dir, self.cu_blob)
         os.chmod(runfile, 0o777)
-        cmd = [os.path.join(self.src_dir, runfile),
+        cmd = [runfile,
                '--toolkitpath', self.extractdir, '--toolkit', 
                '--silent', '--override']
         check_call(cmd)

@@ -20,11 +20,12 @@ install:
   - conda update -q conda
   - conda create -n cuda-test python=3.6 conda-build
   - source activate cuda-test
+  
+script:
   - conda-build condarecipe9.2
   - conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
   - ls $CONDA_PREFIX/etc/conda/activate.d
   - cat $CONDA_PREFIX/cudatoolkit-dev_config.yaml
   # Find the size of the built package
   - bzcat $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 | wc -c | perl -lne 'printf("%.2fM\n", $_/1024/1024)'
-script:
   - python tests/toy_test.py
