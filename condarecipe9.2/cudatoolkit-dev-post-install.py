@@ -183,7 +183,7 @@ class LinuxExtractor(Extractor):
         print("HELLLLLLLLLO", os.listdir(self.src_dir),
               os.listdir(self.extractdir))
         os.chmod(runfile, 0o777)
-        cmd = [runfile,
+        cmd = ["bash", runfile,
                '--toolkitpath', str(self.extractdir), '--toolkit',
                '--silent', '--override']
         check_call(cmd)
