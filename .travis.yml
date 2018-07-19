@@ -25,7 +25,8 @@ script:
   - conda-build condarecipe9.2
   - conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
   - ls $CONDA_PREFIX/etc/conda/activate.d
-  - ls $CONDA_PREFIX/pkgs
+  - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev
+  - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev/extracted
   # Find the size of the built package
   - bzcat $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 | wc -c | perl -lne 'printf("%.2fM\n", $_/1024/1024)'
   - python tests/toy_test.py
