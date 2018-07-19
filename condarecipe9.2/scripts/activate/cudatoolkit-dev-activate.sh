@@ -1,2 +1,2 @@
-#!/usr/bin/env bash
+#!/bin/sh
 python $CONDA_PREFIX/etc/conda/activate.d/cudatoolkit-dev-activate.py
