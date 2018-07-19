@@ -4,6 +4,7 @@ jobs:
     docker:
       - image: condaforge/linux-anvil
     steps:
+      - checkout 
       - run: export PATH="/opt/conda/bin:${PATH}" && conda --version 
       - run: export PATH="/opt/conda/bin:${PATH}" && conda config --set always_yes yes --set changeps1 no && conda update -q conda && conda create -n cuda-test python=3.6 conda-build
       - run: export PATH="/opt/conda/bin:${PATH}" && source activate cuda-test && conda-build condarecipe9.2 && conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
