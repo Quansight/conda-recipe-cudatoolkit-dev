@@ -42,5 +42,5 @@ test_script:
   - "conda install --use-local %CONDA_PREFIX%\\conda-bld\\win-64\\cudatoolkit-dev-9.2-0.tar.bz2 -v"
   - "conda list"
   - "DIR %CONDA_PREFIX%\\etc\\conda\\activate.d"
-  - "DIR %CONDA_PREFIX%\\pkgs\\cudatoolkit-dev\\extracted"
+  - "DIR %CONDA_PREFIX%\\pkgs\\cudatoolkit-dev-9.2-0"
   - python tests/toy_test.py

@@ -10,7 +10,6 @@ import subprocess
 from tempfile import TemporaryDirectory as tempdir
 from conda.exports import download, hashsum_file
 import yaml
-import stat 
 
 config = {}
 versions = ["9.2"]
@@ -69,7 +68,8 @@ class Extractor(object):
           ver_config - the configuration for this CUDA version
           platform_config - the configuration for this platform
         """
-
+        self.cu_name = os.environ["PKG_NAME"]
+        self.cu_buildnum = os.environ["PKG_BUILDNUM"]
         self.cu_version = version
         self.md5_url = ver_config["md5_url"]
         self.base_url = ver_config["base_url"]
@@ -79,10 +79,11 @@ class Extractor(object):
         self.config = {"version": version, **ver_config}
         self.conda_prefix = os.environ.get('CONDA_PREFIX')
         self.prefix = os.environ["PREFIX"]
-        self.src_dir = Path(self.conda_prefix) / 'pkgs' / 'cudatoolkit-dev'
-        self.extractdir = self.src_dir / 'extracted'
+        self.src_dir = Path(self.conda_prefix) / 'pkgs' / '{}-{}-{}'.format(
+                            self.cu_name, self.cu_version, self.cu_buildnum)
+        # self.extractdir = self.src_dir / 'extracted'
         try:
-            os.makedirs(self.extractdir)
+            os.makedirs(self.src_dir)
 
         except FileExistsError:
             pass
@@ -148,7 +149,8 @@ class Extractor(object):
         """Dumps the config dictionary into the output directory
         """
 
-        dumpfile = os.path.join(self.conda_prefix, 'cudatoolkit-dev_config.yaml')
+        dumpfile = os.path.join(self.conda_prefix, 
+                                'cudatoolkit-dev_config.yaml')
         with open(dumpfile, 'w') as f:
             yaml.dump(self.config, f, default_flow_style=False)
 
@@ -164,11 +166,12 @@ class WindowsExtractor(Extractor):
         print("Extracting on Windows.....")
         runfile = os.path.join(self.src_dir, self.cu_blob)
         cmd = ['7za', 'x', '-o%s' %
-               str(self.extractdir), runfile]
+               str(self.src_dir), runfile]
         try:
             subprocess.check_call(cmd)
         except subprocess.CalledProcessError as e:
-            print("ERROR: Couldn't install Cudatoolkit: {reason}".format(reason=e))
+            print("ERROR: Couldn't install Cudatoolkit: \
+                   {reason}".format(reason=e))
         self.copy()
 
 
@@ -186,11 +189,12 @@ class LinuxExtractor(Extractor):
         # os.chmod(runfile, st.st_mode | stat.S_IXOTH)
         os.chmod(runfile, 0o777)
         cmd = [runfile, '--silent', '--toolkit',
-               '--toolkitpath', str(self.extractdir), '--override']
+               '--toolkitpath', str(self.src_dir), '--override']
         try:
             subprocess.check_call(cmd)
         except subprocess.CalledProcessError as e:
-            print("ERROR: Couldn't install Cudatoolkit: {reason}".format(reason=e))
+            print("ERROR: Couldn't install Cudatoolkit: \
+                   {reason}".format(reason=e))
    
         self.copy()
 
