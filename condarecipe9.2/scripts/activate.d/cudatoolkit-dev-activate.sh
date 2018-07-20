@@ -1,15 +1,17 @@
 #!/usr/bin/env bash
 
-for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/bin;
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/bin/*;
 do 
-    ln -s $f $CONDA_PREFIX/bin/${f};
+    link=$(basename ${f});
+    ln -s $f $CONDA_PREFIX/bin/${link};
 
 done
 
 
-for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/lib64;
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/lib64/*;
 do 
-    ln -s $f $CONDA_PREFIX/lib/${f};
+    link=$(basename ${f});
+    ln -s $f $CONDA_PREFIX/lib/${link};
 
 done
 
