@@ -105,8 +105,10 @@ class Extractor(object):
         self.debug_install_path = os.environ.get('DEBUG_INSTALLER_PATH')
 
     def create_activate_and_deactivate_scripts(self):
-        activate_dir_path = Path(self.conda_prefix) / 'etc' / 'conda' / 'activate.d'
-        deactivate_dir_path = Path(self.conda_prefix) / 'etc' / 'conda' / 'deactivate.d'
+        activate_dir_path = Path(self.conda_prefix) / \
+            'etc' / 'conda' / 'activate.d'
+        deactivate_dir_path = Path(
+            self.conda_prefix) / 'etc' / 'conda' / 'deactivate.d'
 
         try:
             os.makedirs(activate_dir_path)
@@ -119,21 +121,21 @@ class Extractor(object):
         # to activate.d and deactivate.d directories
 
         scripts_dir = Path(self.prefix) / 'scripts'
-        activate_scripts_dir = scripts_dir / 'activate'
-        deactivate_scripts_dir = scripts_dir / 'deactivate'
+        activate_scripts_dir = scripts_dir / 'activate.d'
+        deactivate_scripts_dir = scripts_dir / 'deactivate.d'
 
-        activate_scripts_list = ["cudatoolkit-dev-activate.py", 
-                                 "cudatoolkit-dev-activate.sh", 
+        activate_scripts_list = ["cudatoolkit-dev-activate.py",
+                                 "cudatoolkit-dev-activate.sh",
                                  "cudatoolkit-dev-activate.bat"]
-        for file_name in os.listdir(activate_scripts_list):
+        for file_name in activate_scripts_list:
             file_full_path = activate_scripts_dir / file_name
             shutil.copy(file_full_path, activate_dir_path)
 
-        deactivate_scripts_list = ["cudatoolkit-dev-deactivate.py", 
-                                   "cudatoolkit-dev-deactivate.sh", 
+        deactivate_scripts_list = ["cudatoolkit-dev-deactivate.py",
+                                   "cudatoolkit-dev-deactivate.sh",
                                    "cudatoolkit-dev-deactivate.bat"]
 
-        for file_name in os.listdir(deactivate_scripts_list):
+        for file_name in deactivate_scripts_list:
             file_full_path = deactivate_scripts_dir / file_name
             shutil.copy(file_full_path, deactivate_dir_path)
 
@@ -280,10 +282,10 @@ def _main():
     extractor_impl = dispatcher[plat]
     version_cfg = config[cu_version]
     extractor = extractor_impl(cu_version, version_cfg, version_cfg[plat])
-    
+
     # create activate and deactivate scripts
     extractor.create_activate_and_deactivate_scripts()
-    
+
     # download binaries
     extractor.download_blobs()
 
