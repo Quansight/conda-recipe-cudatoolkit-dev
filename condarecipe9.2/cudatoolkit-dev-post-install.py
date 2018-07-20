@@ -2,11 +2,7 @@ from __future__ import print_function
 import os
 import sys
 import shutil
-import tarfile
-import fnmatch
-from tempfile import TemporaryDirectory as tempdir
 import urllib.parse as urlparse
-from contextlib import contextmanager
 from pathlib import Path
 import subprocess
 from conda.exports import download, hashsum_file
@@ -223,36 +219,31 @@ class LinuxExtractor(Extractor):
                    {reason}".format(reason=e))
 
 
-@contextmanager
-def _hdiutil_mount(mntpnt, image):
-    """Context manager to mount osx dmg images and ensure they are
-    unmounted on exit.
-    """
-    subprocess.check_call(['hdiutil', 'attach', '-mountpoint', mntpnt, image])
-    yield mntpnt
-    subprocess.check_call(['hdiutil', 'detach', mntpnt])
-
-
 class OsxExtractor(Extractor):
     """The osx Extractor
     """
 
-    def _mount_extract(self, image, store):
-        """Mounts and extracts the files from an image into store
+    def _hdiutil_mount(temp_dir, file_name, install_dir):
+        """Function to mount osx dmg images, extracts the files
+           from an image into store and ensure they are
+           unmounted on exit.
         """
-        with tempdir() as tmpmnt:
-            with _hdiutil_mount(tmpmnt, os.path.join(os.getcwd(), image)) as mntpnt:
-                for tlpath, tldirs, tlfiles in os.walk(mntpnt):
-                    for tzfile in fnmatch.filter(tlfiles, "*.tar.gz"):
-                        with tarfile.open(os.path.join(tlpath, tzfile)) as tar:
-                            tar.extractall(store)
+        # open
+        cmd = ['hdiutil', 'attach', '-mountpoint', temp_dir, file_name]
+        subprocess.check_call(cmd)
+        # find tar.gz files
+        cmd = ['find', temp_dir, '-name', '"*.tar.gz"', '-exec', 'tar',
+               'xvf', '{}', '--directory', install_dir]
+        subprocess.check_call(cmd)
+        # close
+        subprocess.check_call(['hdiutil', 'detach', temp_dir])
 
     def extract(self):
         runfile = os.path.join(self.src_dir, self.cu_blob)
         extract_store_name = 'tmpstore'
         extract_store = os.path.join(self.src_dir, extract_store_name)
         os.mkdir(extract_store)
-        self._mount_extract(runfile, extract_store)
+        self._hdiutil_mount(extract_store, runfile, self.src_dir)
 
 
 def getplatform():
