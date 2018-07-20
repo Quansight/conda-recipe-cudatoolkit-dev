@@ -17,7 +17,6 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda update -q conda
   - conda create -n cuda-test python=3.6 conda-build
   - source activate cuda-test
   
@@ -26,10 +25,6 @@ script:
   - conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
   - source deactivate 
   - source activate cuda-test
-  - ls $CONDA_PREFIX/etc/conda/activate.d
-  - echo $CUDA_HOME
   - ls $CONDA_PREFIX/bin
   - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0
-  - which nvcc 
-  # Find the size of the built package
-  - bzcat $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 | wc -c | perl -lne 'printf("%.2fM\n", $_/1024/1024)'
+ 
