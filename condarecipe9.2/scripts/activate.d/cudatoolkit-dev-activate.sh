@@ -3,22 +3,27 @@
 for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/bin/*;
 do 
     link=$(basename "$f");
-
-    if ! [ -L $CONDA_PREFIX/bin/${link} ]; then
-       ln -s $f $CONDA_PREFIX/bin/${link};
-    fi 
-
+    ln -sf $f $CONDA_PREFIX/bin/${link};
 done
 
 
 for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/lib64/*;
 do 
     link=$(basename "$f");
-
-    if ! [ -L $CONDA_PREFIX/lib/${link} ]; then
-       ln -s $f $CONDA_PREFIX/lib/${link};
-    fi
+    ln -sf $f $CONDA_PREFIX/lib/${link};
 
 done
 
-set CUDA_HOME=$CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/nvvm/bin/*;
+do 
+    link=$(basename "$f");
+    ln -sf $f $CONDA_PREFIX/bin/${link};
+
+done
+
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/nvvm/lib64/*;
+do 
+    link=$(basename "$f");
+    ln -sf $f $CONDA_PREFIX/lib/${link};
+
+done
