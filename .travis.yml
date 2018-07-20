@@ -17,7 +17,7 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda create -n cuda-test python=3.6 conda-build
+  - conda create -n cuda-test python=3.6 conda-build numba
   - source activate cuda-test
   
 script:
@@ -27,4 +27,5 @@ script:
   - source activate cuda-test
   - ls $CONDA_PREFIX/bin
   - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0
+  - python tests/run_test.py
  
