@@ -6,7 +6,7 @@ matrix:
       python: 3.6 
 
     - os: osx
-      language: generic
+      python: 3.6
 
 
 install:
@@ -25,17 +25,15 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda create -n cuda-test python=3.6 conda-build numba
-  - source activate cuda-test
+  - conda create -n cudatool python=3.6 conda-build numba
+  - source activate cudatool
   
 script:
   - conda-build condarecipe9.2
-  - conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
-  - source deactivate 
-  - source activate cuda-test
-  - ls $CONDA_PREFIX/bin
-  - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0
-  - python tests/run_test.py
+  - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
+        conda install --use-local $CONDA_PREFIX/conda-bld/osx-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
+    else
+        conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
  
 
 notifications:
