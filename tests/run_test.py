@@ -11,7 +11,7 @@ def run_test():
     print("NVVM version", nvvm.get_version())
     # check pkg version matches lib pulled in
     gotlib = get_cudalib('cublas')
-    lookfor = os.environ['PKG_VERSION']
+    lookfor = '9.2'
     if sys.platform.startswith('win'):
         # windows libs have no dot
         lookfor = lookfor.replace('.', '')
