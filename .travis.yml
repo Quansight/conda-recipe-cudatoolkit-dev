@@ -6,7 +6,7 @@ matrix:
       python: 3.6 
 
     - os: osx
-      python: 3.6
+      language: generic
 
 
 install:
@@ -31,9 +31,10 @@ install:
 script:
   - conda-build condarecipe9.2
   - if [[ $TRAVIS_OS_NAME == 'osx' ]]; then
-        conda install --use-local $CONDA_PREFIX/conda-bld/osx-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
+        conda install --use-local $CONDA_PREFIX/conda-bld/osx-64/cudatoolkit-dev-9.2-0.tar.bz2 -v;
     else
-        conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v
+        conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v;
+    fi
  
 
 notifications:
