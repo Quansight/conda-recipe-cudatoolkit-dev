@@ -18,6 +18,10 @@ requirements:
    - 7za # [win]
    - conda 
    - pyyaml
+   
+test:
+  requires:
+    - numba
 
 about:
   home: "https://developer.nvidia.com"
