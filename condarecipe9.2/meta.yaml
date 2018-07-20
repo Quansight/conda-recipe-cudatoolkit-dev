@@ -13,11 +13,14 @@ source:
   path: ../src/
 
 requirements:
+  run:
+   - requests
+   - 7za # [win]
+   - conda 
   host:
    - requests 
    - 7za # [win]
    - conda 
-   - pyyaml
 
 about:
   home: "https://developer.nvidia.com"

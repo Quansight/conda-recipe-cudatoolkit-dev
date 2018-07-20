@@ -41,3 +41,13 @@ do
     fi 
     
 done
+
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/nvvm/libdevice/*;
+do  
+    to_unlink=$(basename ${f});
+
+    if [ -L $CONDA_PREFIX/lib/${to_unlink} ]; then
+       unlink $CONDA_PREFIX/lib/${to_unlink};
+    fi 
+    
+done

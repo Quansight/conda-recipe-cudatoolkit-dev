@@ -3,13 +3,13 @@ import os
 import sys
 import shutil
 import tarfile
+import fnmatch
+from tempfile import TemporaryDirectory as tempdir
 import urllib.parse as urlparse
 from contextlib import contextmanager
 from pathlib import Path
 import subprocess
-from tempfile import TemporaryDirectory as tempdir
 from conda.exports import download, hashsum_file
-import yaml
 import stat
 
 
@@ -93,7 +93,6 @@ class Extractor(object):
         self.prefix = os.environ["PREFIX"]
         self.src_dir = Path(self.conda_prefix) / 'pkgs' / '{}-{}-{}'.format(
             self.cu_name, self.cu_version, self.cu_buildnum)
-        # self.extractdir = self.src_dir / 'extracted'
         try:
             os.makedirs(self.src_dir)
 
@@ -173,40 +172,27 @@ class Extractor(object):
         check_dict = {x[0]: x[1] for x in checksums}
         assert check_dict[md5sum].startswith(self.cu_blob[:-7])
 
-    def copy(self, *args):
-        """The method to copy extracted files into the conda package platform
-        specific directory. Platform specific extractors must implement.
-        """
-        raise RuntimeError("Must implement")
-
     def extract(self, *args):
         """The method to extract files from the cuda binary blobs.
         Platform specific extractors must implement.
         """
         raise RuntimeError("Must implement")
 
-    def get_paths(self):
-        print("Getting paths..............")
-
-    def copy_files(self):
-        print("Copying files............")
-
-    def dump_config(self):
-        """Dumps the config dictionary into the output directory
+    def cleanup(self):
+        """The method to delete unnecessary files after
+        the installation process.
         """
+        blob_path = os.path.join(self.src_dir, self.cu_blob)
+        if os.path.exists(blob_path):
+            os.remove(blob_path)
 
-        dumpfile = os.path.join(self.conda_prefix,
-                                'cudatoolkit-dev_config.yaml')
-        with open(dumpfile, 'w') as f:
-            yaml.dump(self.config, f, default_flow_style=False)
+        else:
+            pass
 
 
 class WindowsExtractor(Extractor):
     """The windows extractor
     """
-
-    def copy(self, *args):
-        print("This is Windows Extractor Copy function...............")
 
     def extract(self):
         print("Extracting on Windows.....")
@@ -218,21 +204,15 @@ class WindowsExtractor(Extractor):
         except subprocess.CalledProcessError as e:
             print("ERROR: Couldn't install Cudatoolkit: \
                    {reason}".format(reason=e))
-        self.copy()
 
 
 class LinuxExtractor(Extractor):
     """The Linux Extractor
     """
 
-    def copy(self, *args):
-        print("This is Linux Extractor Copy function ..............")
-
     def extract(self):
         print("Extracting on Linux")
         runfile = os.path.join(self.src_dir, self.cu_blob)
-        # st = os.stat(runfile)
-        # os.chmod(runfile, st.st_mode | stat.S_IXOTH)
         os.chmod(runfile, 0o777)
         cmd = [runfile, '--silent', '--toolkit',
                '--toolkitpath', str(self.src_dir), '--override']
@@ -242,14 +222,37 @@ class LinuxExtractor(Extractor):
             print("ERROR: Couldn't install Cudatoolkit: \
                    {reason}".format(reason=e))
 
-        self.copy()
+
+@contextmanager
+def _hdiutil_mount(mntpnt, image):
+    """Context manager to mount osx dmg images and ensure they are
+    unmounted on exit.
+    """
+    subprocess.check_call(['hdiutil', 'attach', '-mountpoint', mntpnt, image])
+    yield mntpnt
+    subprocess.check_call(['hdiutil', 'detach', mntpnt])
 
 
 class OsxExtractor(Extractor):
-    """The Osx Extractor
+    """The osx Extractor
     """
 
-    pass
+    def _mount_extract(self, image, store):
+        """Mounts and extracts the files from an image into store
+        """
+        with tempdir() as tmpmnt:
+            with _hdiutil_mount(tmpmnt, os.path.join(os.getcwd(), image)) as mntpnt:
+                for tlpath, tldirs, tlfiles in os.walk(mntpnt):
+                    for tzfile in fnmatch.filter(tlfiles, "*.tar.gz"):
+                        with tarfile.open(os.path.join(tlpath, tzfile)) as tar:
+                            tar.extractall(store)
+
+    def extract(self):
+        runfile = os.path.join(self.src_dir, self.cu_blob)
+        extract_store_name = 'tmpstore'
+        extract_store = os.path.join(self.src_dir, extract_store_name)
+        os.mkdir(extract_store)
+        self._mount_extract(runfile, extract_store)
 
 
 def getplatform():
@@ -275,7 +278,7 @@ def _main():
     print("Running Post installation")
 
     # package version decl must match cuda release version
-    cu_version = "9.2"
+    cu_version = os.environ['PKG_VERSION']
 
     # get an extractor
     plat = getplatform()
@@ -294,9 +297,6 @@ def _main():
 
     # Extract
     extractor.extract()
-
-    # Dump config
-    extractor.dump_config()
 
 
 if __name__ == "__main__":
