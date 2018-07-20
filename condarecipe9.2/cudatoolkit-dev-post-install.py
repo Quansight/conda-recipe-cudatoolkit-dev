@@ -12,6 +12,7 @@ from conda.exports import download, hashsum_file
 import yaml
 import stat
 
+
 def set_chmod(file_name):
     # Do a simple chmod +x for a file within python
     st = os.stat(file_name)
@@ -34,7 +35,6 @@ def copy_files(src, dst):
         pass
 
 
-
 config = {}
 versions = ["9.2"]
 for v in versions:
@@ -50,32 +50,20 @@ cu_92["md5_url"] = "http://developer.download.nvidia.com/compute/cuda/9.2/Prod2/
 cu_92['libdevice_versions'] = ['10']
 
 cu_92['linux'] = {'blob': 'cuda_9.2.148_396.37_linux',
-                 'patches': [],
-                 # need globs to handle symlinks
-                 'cuda_lib_fmt': 'lib{0}.so*',
-                 'nvtoolsext_fmt': 'lib{0}.so*',
-                 'nvvm_lib_fmt': 'lib{0}.so*',
-                 'libdevice_lib_fmt': 'libdevice.{0}.bc'
-                 }
+                  'patches': [],
+                  }
 
 cu_92['windows'] = {'blob': 'cuda_9.2.148_windows',
-                   'patches': [],
-                   'cuda_lib_fmt': '{0}64_91.dll',
-                   'nvtoolsext_fmt': '{0}64_1.dll',
-                   'nvvm_lib_fmt': '{0}64_32_0.dll',
-                   'libdevice_lib_fmt': 'libdevice.{0}.bc',
-                   'NvToolsExtPath' :
-                       os.path.join('c:' + os.sep, 'Program Files',
-                                    'NVIDIA Corporation', 'NVToolsExt', 'bin')
-                   }
+                    'patches': [],
+                    'NvToolsExtPath':
+                    os.path.join('c:' + os.sep, 'Program Files',
+                                 'NVIDIA Corporation', 'NVToolsExt', 'bin')
+                    }
 
 cu_92['osx'] = {'blob': 'cuda_9.2.148_mac',
-               'patches': [],
-               'cuda_lib_fmt': 'lib{0}.9.1.dylib',
-               'nvtoolsext_fmt': 'lib{0}.1.dylib',
-               'nvvm_lib_fmt': 'lib{0}.3.2.0.dylib',
-               'libdevice_lib_fmt': 'libdevice.{0}.bc'
-               }
+                'patches': [],
+                }
+
 
 class Extractor(object):
     """Extractor base class, platform specific extractors should inherit
@@ -104,7 +92,7 @@ class Extractor(object):
         self.conda_prefix = os.environ.get('CONDA_PREFIX')
         self.prefix = os.environ["PREFIX"]
         self.src_dir = Path(self.conda_prefix) / 'pkgs' / '{}-{}-{}'.format(
-                            self.cu_name, self.cu_version, self.cu_buildnum)
+            self.cu_name, self.cu_version, self.cu_buildnum)
         # self.extractdir = self.src_dir / 'extracted'
         try:
             os.makedirs(self.src_dir)
@@ -115,6 +103,32 @@ class Extractor(object):
         self.output_dir = os.path.join(self.prefix, self.libdir[getplatform()])
         self.symlinks = getplatform() == "linux"
         self.debug_install_path = os.environ.get('DEBUG_INSTALLER_PATH')
+
+    def create_activate_and_deactivate_scripts(self):
+        activate_dir_path = self.conda_prefix / 'etc' / 'conda' / 'activate.d'
+        deactivate_dir_path = self.conda_prefix / 'etc' / 'conda' / 'deactivate.d'
+
+        try:
+            os.makedirs(activate_dir_path)
+            os.makedirs(deactivate_dir_path)
+
+        except FileExistsError:
+            pass
+
+        # Copy cudatoolkit-dev-activate and cudatoolkit-dev-deactivate
+        # to activate.d and deactivate.d directories
+
+        scripts_dir = Path(self.prefix) / 'scripts'
+        activate_scripts_dir = scripts_dir / 'activate.d'
+        deactivate_scripts_dir = scripts_dir / 'deactivate.d'
+
+        for file_name in os.listdir(activate_scripts_dir):
+            file_full_path = activate_scripts_dir / file_name
+            shutil.copy(file_full_path, activate_dir_path)
+
+        for file_name in os.listdir(deactivate_scripts_dir):
+            file_full_path = deactivate_scripts_dir / file_name
+            shutil.copy(file_full_path, deactivate_dir_path)
 
     def download_blobs(self):
         """Downloads the binary blobs to the $SRC_DIR
@@ -149,7 +163,7 @@ class Extractor(object):
         # check md5 and filename match up
         check_dict = {x[0]: x[1] for x in checksums}
         assert check_dict[md5sum].startswith(self.cu_blob[:-7])
-      
+
     def copy(self, *args):
         """The method to copy extracted files into the conda package platform
         specific directory. Platform specific extractors must implement.
@@ -169,11 +183,10 @@ class Extractor(object):
         print("Copying files............")
 
     def dump_config(self):
-
         """Dumps the config dictionary into the output directory
         """
 
-        dumpfile = os.path.join(self.conda_prefix, 
+        dumpfile = os.path.join(self.conda_prefix,
                                 'cudatoolkit-dev_config.yaml')
         with open(dumpfile, 'w') as f:
             yaml.dump(self.config, f, default_flow_style=False)
@@ -219,7 +232,7 @@ class LinuxExtractor(Extractor):
         except subprocess.CalledProcessError as e:
             print("ERROR: Couldn't install Cudatoolkit: \
                    {reason}".format(reason=e))
-   
+
         self.copy()
 
 
@@ -250,63 +263,27 @@ dispatcher = {
 
 def _main():
 
-    prefix_dir_path = Path(os.environ['PREFIX'])
-    prefix_bin_dir_path = prefix_dir_path / 'bin'
-    conda_prefix_path = Path(os.environ['CONDA_PREFIX'])
-    print('---------------', prefix_dir_path)
-    print('---------------', conda_prefix_path)
-    # Create activated.d and deactivate.d directories
-    activate_dir_path = conda_prefix_path / 'etc' / 'conda' / 'activate.d'
-    deactivate_dir_path = conda_prefix_path / 'etc' / 'conda' / 'deactivate.d'
-    create_dir(prefix_bin_dir_path)
-    create_dir(activate_dir_path)
-    create_dir(deactivate_dir_path)
-    # Copy cudatoolkit-dev-activate and cudatoolkit-dev-deactivate
-    # to activate.d and deactivate.d directories
-
-    recipe_dir_path = Path(os.environ['RECIPE_DIR'])
-    scripts_dir_path = recipe_dir_path / 'scripts'
-    activate_scripts_path = scripts_dir_path / 'activate'
-    deactivate_scripts_path = scripts_dir_path / 'deactivate'
-
-    for file_name in os.listdir(activate_scripts_path):
-        full_file_name = os.path.join(activate_scripts_path, file_name)
-        copy_files(full_file_name, activate_dir_path)
-    for file_name in os.listdir(deactivate_scripts_path):
-        full_file_name = os.path.join(deactivate_scripts_path, file_name)
-        copy_files(full_file_name, deactivate_dir_path)
-    # Copy cudatoolkit-dev-post-install.py to $PREFIX/bin
-    src = recipe_dir_path / 'cudatoolkit-dev-post-install.py'
-    dst = prefix_bin_dir_path
-    copy_files(src, dst)
-
-    print("<<<<<<<<<<<<<<<<<<<<<<<<<Listing Different Files>>>>>>>>>>>>>>>>>>>>")
-    print(os.listdir(activate_dir_path))
-    print(os.listdir(deactivate_dir_path))
-    print(os.listdir(prefix_bin_dir_path))
-
-
     print("Running Post installation")
 
-    # package version decl must match cuda release version 
+    # package version decl must match cuda release version
     cu_version = "9.2"
 
-    # get an extractor 
+    # get an extractor
     plat = getplatform()
     extractor_impl = dispatcher[plat]
     version_cfg = config[cu_version]
     extractor = extractor_impl(cu_version, version_cfg, version_cfg[plat])
 
-    # download binaries 
+    # download binaries
     extractor.download_blobs()
 
-    # check md5sum 
+    # check md5sum
     extractor.check_md5()
 
-    # Extract 
+    # Extract
     extractor.extract()
 
-    # Dump config 
+    # Dump config
     extractor.dump_config()
 
 
