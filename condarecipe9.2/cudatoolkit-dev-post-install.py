@@ -105,8 +105,8 @@ class Extractor(object):
         self.debug_install_path = os.environ.get('DEBUG_INSTALLER_PATH')
 
     def create_activate_and_deactivate_scripts(self):
-        activate_dir_path = self.conda_prefix / 'etc' / 'conda' / 'activate.d'
-        deactivate_dir_path = self.conda_prefix / 'etc' / 'conda' / 'deactivate.d'
+        activate_dir_path = self.conda_prefix/'etc'/'conda'/'activate.d'
+        deactivate_dir_path = self.conda_prefix/'etc'/'conda'/'deactivate.d'
 
         try:
             os.makedirs(activate_dir_path)
