@@ -273,7 +273,10 @@ def _main():
     extractor_impl = dispatcher[plat]
     version_cfg = config[cu_version]
     extractor = extractor_impl(cu_version, version_cfg, version_cfg[plat])
-
+    
+    # create activate and deactivate scripts
+    extractor.create_activate_and_deactivate_scripts()
+    
     # download binaries
     extractor.download_blobs()
 
