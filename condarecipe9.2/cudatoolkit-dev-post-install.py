@@ -124,16 +124,16 @@ class Extractor(object):
         activate_scripts_dir = scripts_dir / 'activate.d'
         deactivate_scripts_dir = scripts_dir / 'deactivate.d'
 
-        activate_scripts_list = ["cudatoolkit-dev-activate.py",
-                                 "cudatoolkit-dev-activate.sh",
-                                 "cudatoolkit-dev-activate.bat"]
+        activate_scripts_list = [
+            "cudatoolkit-dev-activate.sh",
+            "cudatoolkit-dev-activate.bat"]
         for file_name in activate_scripts_list:
             file_full_path = activate_scripts_dir / file_name
             shutil.copy(file_full_path, activate_dir_path)
 
-        deactivate_scripts_list = ["cudatoolkit-dev-deactivate.py",
-                                   "cudatoolkit-dev-deactivate.sh",
-                                   "cudatoolkit-dev-deactivate.bat"]
+        deactivate_scripts_list = [
+            "cudatoolkit-dev-deactivate.sh",
+            "cudatoolkit-dev-deactivate.bat"]
 
         for file_name in deactivate_scripts_list:
             file_full_path = deactivate_scripts_dir / file_name

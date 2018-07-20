@@ -28,5 +28,6 @@ script:
   - echo $CUDA_HOME
   - ls $CONDA_PREFIX/bin
   - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0
+  - which nvcc 
   # Find the size of the built package
   - bzcat $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 | wc -c | perl -lne 'printf("%.2fM\n", $_/1024/1024)'
