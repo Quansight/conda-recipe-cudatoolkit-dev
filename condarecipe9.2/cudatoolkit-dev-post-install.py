@@ -223,7 +223,7 @@ class OsxExtractor(Extractor):
     """The osx Extractor
     """
 
-    def _hdiutil_mount(temp_dir, file_name, install_dir):
+    def _hdiutil_mount(self, temp_dir, file_name, install_dir):
         """Function to mount osx dmg images, extracts the files
            from an image into store and ensure they are
            unmounted on exit.
