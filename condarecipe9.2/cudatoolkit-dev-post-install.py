@@ -233,7 +233,7 @@ class OsxExtractor(Extractor):
         subprocess.check_call(cmd)
         # find tar.gz files
         cmd = ['find', temp_dir, '-name', '"*.tar.gz"', '-exec', 'tar',
-               'xvf', '{}', '--directory', install_dir, "\\"]
+               'xvf', '{}', '--directory', install_dir, "\\", ";"]
         subprocess.check_call(cmd)
         # close
         subprocess.check_call(['hdiutil', 'detach', temp_dir])
@@ -288,6 +288,9 @@ def _main():
 
     # Extract
     extractor.extract()
+
+    # Cleanup 
+    extractor.cleanup()
 
 
 if __name__ == "__main__":
