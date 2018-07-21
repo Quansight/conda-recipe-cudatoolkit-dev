@@ -35,7 +35,7 @@ script:
     else
         conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v;
     fi
- 
+  - ls $CONDA_PREFIX/pkgs
 
 notifications:
   email: false
