@@ -69,15 +69,15 @@ class Extractor(object):
               'osx': 'lib',
               'windows': 'DLLs', }
 
-    def __init__(self, version, ver_config, platform_config):
+    def __init__(self, version, name, build_num, ver_config, platform_config):
         """Initialise an instance:
         Arguments:
           version - CUDA version string
           ver_config - the configuration for this CUDA version
           platform_config - the configuration for this platform
         """
-        self.cu_name = os.environ["PKG_NAME"]
-        self.cu_buildnum = os.environ["PKG_BUILDNUM"]
+        self.cu_name = name
+        self.cu_buildnum = build_num
         self.cu_version = version
         self.md5_url = ver_config["md5_url"]
         self.base_url = ver_config["base_url"]
@@ -270,12 +270,19 @@ def _main():
 
     # package version decl must match cuda release version
     cu_version = os.environ['PKG_VERSION']
+    cu_name = os.environ['PKG_NAME']
+    cu_buildnum = os.environ['PKG_BUILDNUM']
 
     # get an extractor
     plat = getplatform()
     extractor_impl = dispatcher[plat]
     version_cfg = config[cu_version]
-    extractor = extractor_impl(cu_version, version_cfg, version_cfg[plat])
+    extractor = extractor_impl(
+        cu_version,
+        cu_name,
+        cu_buildnum,
+        version_cfg,
+        version_cfg[plat])
 
     # create activate and deactivate scripts
     extractor.create_activate_and_deactivate_scripts()
@@ -289,7 +296,7 @@ def _main():
     # Extract
     extractor.extract()
 
-    # Cleanup 
+    # Cleanup
     extractor.cleanup()
 
 
