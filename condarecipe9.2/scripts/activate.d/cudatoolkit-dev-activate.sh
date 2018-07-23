@@ -34,3 +34,10 @@ do
     ln -sf $f $CONDA_PREFIX/lib/${link};
 
 done
+
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/include/*;
+do 
+    link=$(basename "$f");
+    ln -sf $f $CONDA_PREFIX/include/${link};
+
+done

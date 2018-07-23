@@ -51,3 +51,12 @@ do
     fi 
     
 done
+
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/include/*;
+do 
+    to_unlink=$(basename ${f});
+
+    if [ -L "$CONDA_PREFIX/include/${to_unlink}" ]; then
+       unlink $CONDA_PREFIX/include/${to_unlink};
+    fi 
+done    

@@ -13,10 +13,6 @@ source:
   path: ../src/
 
 requirements:
-  run:
-   - requests
-   - 7za # [win]
-   - conda 
   host:
    - requests 
    - 7za # [win]
@@ -44,5 +40,6 @@ about:
 extra:
   recipe-maintainers:
     - andersy005
-    - xmnlab
     - scopatz
+    - xmnlab
+
