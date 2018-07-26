@@ -31,7 +31,7 @@ done
 for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev/nvvm/libdevice/*;
 do 
     link=$(basename "$f");
-    ln -sf $f $CONDA_PREFIX/bin/${link};
+    ln -sf $f $CONDA_PREFIX/lib/${link};
 
 done
 
