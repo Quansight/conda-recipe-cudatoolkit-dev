@@ -9,8 +9,6 @@ build:
   number: 0
   skip: false
 
-source:
-  path: ../src/
 
 requirements:
   host:

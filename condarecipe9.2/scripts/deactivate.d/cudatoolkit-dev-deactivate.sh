@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/bin/*;
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev/bin/*;
 do  
     to_unlink=$(basename ${f});
     
@@ -11,7 +11,7 @@ do
 done
 
 
-for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/lib64/*;
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev/lib64/*;
 do  
     to_unlink=$(basename ${f});
 
@@ -22,7 +22,7 @@ do
 done
 
 
-for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0/include/*;
+for f in $CONDA_PREFIX/pkgs/cudatoolkit-dev/include/*;
 do 
     to_unlink=$(basename ${f});
 

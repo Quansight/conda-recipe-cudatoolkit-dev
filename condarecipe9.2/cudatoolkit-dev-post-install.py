@@ -87,8 +87,7 @@ class Extractor(object):
         self.config = {"version": version, **ver_config}
         self.conda_prefix = os.environ.get('CONDA_PREFIX')
         self.prefix = os.environ["PREFIX"]
-        self.src_dir = Path(self.conda_prefix) / 'pkgs' / '{}-{}-{}'.format(
-            self.cu_name, self.cu_version, self.cu_buildnum)
+        self.src_dir = Path(self.conda_prefix) / 'pkgs' / self.cu_name
         try:
             os.makedirs(self.src_dir)
 
@@ -173,6 +172,7 @@ class Extractor(object):
         Platform specific extractors must implement.
         """
         raise RuntimeError("Must implement")
+
 
     def cleanup(self):
         """The method to delete unnecessary files after
