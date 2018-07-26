@@ -9,7 +9,8 @@ build:
   number: 0
   skip: false
 
-
+source:
+  path: ./
 requirements:
   host:
    - requests 
