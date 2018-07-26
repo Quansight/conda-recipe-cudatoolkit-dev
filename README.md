@@ -48,19 +48,19 @@ If everything is configured properly, you get:
 
 ```
 Finding cublas
-	located at /home/ubuntu/miniconda3/envs/testing/lib/libcublas.so.9.2.148
+	located at /home/ubuntu/miniconda3/envs/cudatest/lib/libcublas.so.9.2.148
 	trying to open library...	ok
 Finding cusparse
-	located at /home/ubuntu/miniconda3/envs/testing/lib/libcusparse.so.9.2.148
+	located at /home/ubuntu/miniconda3/envs/cudatest/lib/libcusparse.so.9.2.148
 	trying to open library...	ok
 Finding cufft
-	located at /home/ubuntu/miniconda3/envs/testing/lib/libcufft.so.9.2.148
+	located at /home/ubuntu/miniconda3/envs/cudatest/lib/libcufft.so.9.2.148
 	trying to open library...	ok
 Finding curand
-	located at /home/ubuntu/miniconda3/envs/testing/lib/libcurand.so.9.2.148
+	located at /home/ubuntu/miniconda3/envs/cudatest/lib/libcurand.so.9.2.148
 	trying to open library...	ok
 Finding nvvm
-	located at /home/ubuntu/miniconda3/envs/testing/lib/libnvvm.so.3.2.0
+	located at /home/ubuntu/miniconda3/envs/cudatest/lib/libnvvm.so.3.2.0
 	trying to open library...	ok
 	finding libdevice for compute_20...	ok
 	finding libdevice for compute_30...	ok
