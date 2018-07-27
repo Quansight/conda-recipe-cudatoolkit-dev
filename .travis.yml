@@ -25,7 +25,7 @@ install:
   - export PATH="$HOME/miniconda/bin:$PATH"
   - hash -r
   - conda config --set always_yes yes --set changeps1 no
-  - conda create -n cudatool python=3.6 conda-build numba
+  - conda create -n cudatool python=3.6 conda-build numba conda-verify
   - source activate cudatool
   
 script:
@@ -35,7 +35,8 @@ script:
     else
         conda install --use-local $CONDA_PREFIX/conda-bld/linux-64/cudatoolkit-dev-9.2-0.tar.bz2 -v;
     fi
-  - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev-9.2-0
+  - ls $CONDA_PREFIX/pkgs/cudatoolkit-dev
+  - python tests/run_test.py
 
 notifications:
   email: false
